@@ -2,11 +2,18 @@ package qma;
 
 import javax.persistence.Column;
 import static java.util.Objects.isNull;
+
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.hibernate.engine.jdbc.SerializableClobProxy;
+
 @Entity
-public class Aluno {
+public class Aluno implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Column
 	@Id
@@ -23,6 +30,10 @@ public class Aluno {
 	
 	@Column
 	private String email;
+	
+	public Aluno() {
+		
+	}
 	
 	public Aluno(String matricula, String nome, String codCurso, String telefone,
 			String email) {

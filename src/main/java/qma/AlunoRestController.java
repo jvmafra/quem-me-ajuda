@@ -18,7 +18,7 @@ public class AlunoRestController {
         return "Hello, World!";
     }
 	
-	@RequestMapping(value = "/aluno/{matricula}", method=RequestMethod.GET)
+	@RequestMapping(value = "/aluno", method=RequestMethod.GET, params="matricula")
     public Aluno getAlunoByMatricula(String matricula){
         return alunoService.getByMatricula(matricula);
     }
