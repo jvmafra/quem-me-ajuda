@@ -1,4 +1,4 @@
-package qma;
+package qma.aluno;
 
 public interface AlunoService {
 	

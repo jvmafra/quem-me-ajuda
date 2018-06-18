@@ -1,5 +1,4 @@
-package qma;
-
+package qma.aluno;
 import javax.persistence.Column;
 import static java.util.Objects.isNull;
 
@@ -7,10 +6,13 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
 
-import org.hibernate.engine.jdbc.SerializableClobProxy;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
+@Inheritance(strategy = javax.persistence.InheritanceType.TABLE_PER_CLASS)
 public class Aluno implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -18,6 +20,10 @@ public class Aluno implements Serializable{
 	@Column
 	@Id
 	private String matricula;
+	
+	@Column
+	@JsonProperty(access = Access.WRITE_ONLY)
+	private String senha;
 	
 	@Column
 	private String nome;
@@ -30,15 +36,16 @@ public class Aluno implements Serializable{
 	
 	@Column
 	private String email;
-	
+
 	public Aluno() {
 		
 	}
 	
-	public Aluno(String matricula, String nome, String codCurso, String telefone,
+	public Aluno(String matricula, String nome, String senha, String codCurso, String telefone,
 			String email) {
 		this.matricula = matricula;
 		this.nome = nome;
+		this.senha = senha;
 		this.codCurso = codCurso;
 		this.telefone = telefone;
 		this.email = email;
@@ -52,6 +59,14 @@ public class Aluno implements Serializable{
 		this.codCurso = codCurso;
 		this.email = email;
 		
+	}
+	
+	public String getSenha() {
+		return senha;
+	}
+	
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 	
 	public String getMatricula() {
