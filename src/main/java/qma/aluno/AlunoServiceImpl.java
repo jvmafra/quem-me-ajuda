@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import static java.util.Objects.isNull;
+
+import java.util.Collection;
+
 import javax.transaction.Transactional;
 
 
@@ -19,15 +22,7 @@ public class AlunoServiceImpl implements AlunoService {
 
 	@Override
 	public Aluno getByMatricula(String matricula) {
-		
-		Aluno aluno;
-		try {
-			aluno = alunoRepository.findById(matricula).get();
-		} catch (Exception e) {
-			throw new RuntimeException("Aluno nao encontrado");
-		}
-		
-		return aluno;
+		return alunoRepository.findById(matricula);
 	}
 
 	@Override
@@ -65,6 +60,21 @@ public class AlunoServiceImpl implements AlunoService {
 		} else {
 			throw new RuntimeException("Atributo nao encontrado");
 		}
+	}
+
+	@Override
+	public Aluno getTutorByMatricula(String matricula) {
+		return alunoRepository.getTutorByMatricula(matricula);
+	}
+
+	@Override
+	public Iterable<Aluno> getAllTutores() {
+		return alunoRepository.getAllTutores();
+	}
+
+	@Override
+	public Aluno tornaTutor(Tutoria tutoria) {
+		return alunoRepository.tornarTutor(tutoria);
 	}
 
 }

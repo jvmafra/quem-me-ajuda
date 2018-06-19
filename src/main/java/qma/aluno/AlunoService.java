@@ -6,5 +6,8 @@ public interface AlunoService {
 	Aluno save(Aluno aluno);
 	Iterable<Aluno> getAllAlunos();
 	String getInfoAluno(String matricula, String atributo);
+	Aluno getTutorByMatricula(String matricula);
+	Iterable<Aluno> getAllTutores();
+	Aluno tornaTutor(Tutoria tutoria);
 
 }

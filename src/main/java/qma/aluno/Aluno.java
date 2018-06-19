@@ -1,4 +1,5 @@
 package qma.aluno;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import static java.util.Objects.isNull;
 
@@ -7,12 +8,13 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
-@Inheritance(strategy = javax.persistence.InheritanceType.TABLE_PER_CLASS)
 public class Aluno implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -20,6 +22,10 @@ public class Aluno implements Serializable{
 	@Column
 	@Id
 	private String matricula;
+	
+	@JoinColumn
+	@OneToOne(cascade = CascadeType.ALL)
+	private Tutoria tutoria;
 	
 	@Column
 	@JsonProperty(access = Access.WRITE_ONLY)
@@ -107,6 +113,14 @@ public class Aluno implements Serializable{
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public void tornarTutor(Tutoria tutoria) {
+		this.tutoria = tutoria;
+	}
+	
+	public Tutoria getTutoria() {
+		return tutoria;
 	}
 	
 	@Override
