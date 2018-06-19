@@ -1,11 +1,14 @@
-package qma;
+package qma.aluno;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import static java.util.Objects.isNull;
-import javax.transaction.Transactional;
 
+import java.util.Collection;
+
+import javax.transaction.Transactional;
 
 
 @Service
@@ -13,21 +16,19 @@ public class AlunoServiceImpl implements AlunoService {
 	
 	@Autowired
 	AlunoRepository alunoRepository;
+	
+//	@Autowired
+//	PasswordEncoder passwordEnconder;
 
 	@Override
 	public Aluno getByMatricula(String matricula) {
-		Aluno aluno = alunoRepository.findById(matricula).get();
-		
-		if (isNull(aluno)) {
-			throw new RuntimeException("Aluno nao encontrado");
-		}
-		
-		return aluno;
+		return alunoRepository.findById(matricula);
 	}
 
 	@Override
 	@Transactional
 	public Aluno save(Aluno aluno) {
+//		aluno.setSenha(passwordEnconder.encode(aluno.getSenha()));
 		return alunoRepository.save(aluno);
 	}
 
@@ -59,6 +60,21 @@ public class AlunoServiceImpl implements AlunoService {
 		} else {
 			throw new RuntimeException("Atributo nao encontrado");
 		}
+	}
+
+	@Override
+	public Aluno getTutorByMatricula(String matricula) {
+		return alunoRepository.getTutorByMatricula(matricula);
+	}
+
+	@Override
+	public Iterable<Aluno> getAllTutores() {
+		return alunoRepository.getAllTutores();
+	}
+
+	@Override
+	public Aluno tornaTutor(Tutoria tutoria) {
+		return alunoRepository.tornarTutor(tutoria);
 	}
 
 }

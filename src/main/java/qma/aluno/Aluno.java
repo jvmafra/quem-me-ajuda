@@ -1,5 +1,5 @@
-package qma;
-
+package qma.aluno;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import static java.util.Objects.isNull;
 
@@ -7,8 +7,12 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
-import org.hibernate.engine.jdbc.SerializableClobProxy;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 public class Aluno implements Serializable{
@@ -18,6 +22,14 @@ public class Aluno implements Serializable{
 	@Column
 	@Id
 	private String matricula;
+	
+	@JoinColumn
+	@OneToOne(cascade = CascadeType.ALL)
+	private Tutoria tutoria;
+	
+	@Column
+	@JsonProperty(access = Access.WRITE_ONLY)
+	private String senha;
 	
 	@Column
 	private String nome;
@@ -30,15 +42,16 @@ public class Aluno implements Serializable{
 	
 	@Column
 	private String email;
-	
+
 	public Aluno() {
 		
 	}
 	
-	public Aluno(String matricula, String nome, String codCurso, String telefone,
+	public Aluno(String matricula, String nome, String senha, String codCurso, String telefone,
 			String email) {
 		this.matricula = matricula;
 		this.nome = nome;
+		this.senha = senha;
 		this.codCurso = codCurso;
 		this.telefone = telefone;
 		this.email = email;
@@ -52,6 +65,14 @@ public class Aluno implements Serializable{
 		this.codCurso = codCurso;
 		this.email = email;
 		
+	}
+	
+	public String getSenha() {
+		return senha;
+	}
+	
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 	
 	public String getMatricula() {
@@ -92,6 +113,14 @@ public class Aluno implements Serializable{
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public void tornarTutor(Tutoria tutoria) {
+		this.tutoria = tutoria;
+	}
+	
+	public Tutoria getTutoria() {
+		return tutoria;
 	}
 	
 	@Override
