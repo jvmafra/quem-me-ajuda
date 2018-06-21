@@ -4,6 +4,9 @@ package qma.aluno;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import qma.tutor.Horario;
+
 import static java.util.Objects.isNull;
 
 import java.util.Collection;
@@ -62,19 +65,46 @@ public class AlunoServiceImpl implements AlunoService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public Aluno getTutorByMatricula(String matricula) {
 		return alunoRepository.getTutorByMatricula(matricula);
 	}
 
+	@Transactional
 	@Override
 	public Iterable<Aluno> getAllTutores() {
 		return alunoRepository.getAllTutores();
 	}
 
+	@Transactional
 	@Override
 	public Aluno tornaTutor(Tutoria tutoria) {
 		return alunoRepository.tornarTutor(tutoria);
+	}
+
+	@Transactional
+	@Override
+	public Aluno cadastraHorario(Horario horario) {
+		return alunoRepository.cadastraHorario(horario);
+	}
+
+	@Override
+	@Transactional
+	public boolean getDisponibilidadeHorario(String matricula, String dia, String hora) {
+		return alunoRepository.getDisponibilidadeHorario(matricula, dia, hora);
+	}
+
+	@Override
+	@Transactional
+	public boolean getDisponibilidadeLocal(String matricula, String local) {
+		return alunoRepository.getDisponibilidadeLocal(matricula, local);
+	}
+
+	@Override
+	@Transactional
+	public Aluno cadastraLocal(Local local) {
+		return alunoRepository.cadastraLocal(local);
 	}
 
 }
