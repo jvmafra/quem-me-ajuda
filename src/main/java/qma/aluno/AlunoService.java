@@ -1,5 +1,7 @@
 package qma.aluno;
 
+import qma.tutor.Horario;
+
 public interface AlunoService {
 	
 	Aluno getByMatricula(String matricula);
@@ -9,5 +11,9 @@ public interface AlunoService {
 	Aluno getTutorByMatricula(String matricula);
 	Iterable<Aluno> getAllTutores();
 	Aluno tornaTutor(Tutoria tutoria);
+	Aluno cadastraHorario(Horario horario);
+	boolean getDisponibilidadeHorario(String matricula, String dia, String hora);
+	boolean getDisponibilidadeLocal(String matricula, String local);
+	Aluno cadastraLocal(Local localDTO);
 
 }
