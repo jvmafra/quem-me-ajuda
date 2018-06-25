@@ -4,8 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import qma.tutor.Horario;
-
 @Entity
 public class Local {
 	
@@ -20,8 +18,7 @@ public class Local {
 		
 	}
 	
-	public Local(String matricula, String local) {
-		this.matricula = matricula;
+	public Local(String local) {
 		this.local = local;
 	}
 
