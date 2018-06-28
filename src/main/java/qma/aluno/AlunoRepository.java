@@ -106,6 +106,10 @@ public class AlunoRepository{
 	public boolean getDisponibilidadeLocal(String matricula, String local) {
 		if (isTutor(matricula)) {
 			Aluno aluno = alunos.get(matricula);
+			System.out.println(aluno.getTutoria().getLocais().size());
+			Local localTemp = new Local(local);
+			System.out.println(localTemp);
+			System.out.println(aluno.getTutoria().getLocais().contains(localTemp));
 			return aluno.getTutoria().getLocais().contains(new Local(local));
 		}
 		
@@ -144,6 +148,9 @@ public class AlunoRepository{
 		for (Aluno aluno: alunos.values()) {
 			
 			if (isTutor(aluno.getMatricula())) {
+				System.out.println("TUTOR");
+				System.out.println(aluno.getTutoria().getDisciplina());
+				System.out.println(pedido.getDisciplina());
 				if (aluno.getTutoria().getDisciplina().equals(pedido.getDisciplina())) {
 					return aluno;
 				}

@@ -1,5 +1,7 @@
 package qma.aluno;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -25,11 +27,11 @@ public class Tutoria  {
 	
 	@JoinColumn
 	@OneToMany
-	private Set<Horario> listaHorarios = new HashSet<>();
+	private List<Horario> listaHorarios = new ArrayList<>();
 	
-	@Column
+	@JoinColumn
 	@OneToMany
-	private Set<Local> locais = new HashSet<>();
+	private List<Local> locais = new ArrayList<>();
 
 	public Tutoria (String matricula, String disciplina, String proficiencia) {
 		this.matricula = matricula;
@@ -65,20 +67,25 @@ public class Tutoria  {
 		this.proficiencia = proficiencia;
 	}
 	
-	public Set<Horario> getListaHorarios() {
+	public List<Horario> getListaHorarios() {
 		return listaHorarios;
 	}
 	
 	public void adicionaHorario (Horario horario) {
-		this.listaHorarios.add(horario);
+		if (!this.listaHorarios.contains(horario)) {
+			this.listaHorarios.add(horario);
+		}
 	}
 	
-	public Set<Local> getLocais() {
+	public List<Local> getLocais() {
 		return locais;
 	}
 	
 	public void adicionaLocal(Local local) {
-		this.locais.add(local);
+		if (!this.locais.contains(local)) {
+			this.locais.add(local);
+		}
+		
 	}
 	
 

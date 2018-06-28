@@ -4,11 +4,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 @Entity
 public class Local {
 	
 	@Id
 	@Column
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String matricula;
 	
 	@Column
@@ -32,10 +36,9 @@ public class Local {
 	
 	@Override
 	public boolean equals(Object obj) {
-		
 		if (obj instanceof Local) {
 			Local other = (Local) obj;
-			
+		
 			return this.local.equals(other.getLocal());
 		}
 		
