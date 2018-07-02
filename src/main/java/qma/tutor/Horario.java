@@ -4,11 +4,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 @Entity
 public class Horario {
 	
 	@Id
 	@Column
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String matricula;
 
 	@Column
