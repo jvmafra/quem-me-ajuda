@@ -5,11 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import qma.tutor.DiaDaSemana;
 import qma.tutor.Horario;
 
-import static java.util.Objects.isNull;
-
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -25,7 +26,13 @@ public class AlunoServiceImpl implements AlunoService {
 
 	@Override
 	public Aluno getByMatricula(String matricula) {
-		return alunoRepository.findById(matricula);
+		Optional<Aluno> optUser = alunoRepository.findById(matricula);
+		
+		if (!optUser.isPresent()) {
+			throw new RuntimeException("Aluno nao encontrado");
+		}
+		
+		return optUser.get();
 	}
 
 	@Override
@@ -36,7 +43,6 @@ public class AlunoServiceImpl implements AlunoService {
 	}
 
 	@Override
-	@Transactional
 	public Iterable<Aluno> getAllAlunos() {
 		return alunoRepository.findAll();
 	}
@@ -64,47 +70,106 @@ public class AlunoServiceImpl implements AlunoService {
 			throw new RuntimeException("Atributo nao encontrado");
 		}
 	}
-
-	@Transactional
+	
 	@Override
 	public Aluno getTutorByMatricula(String matricula) {
-		return alunoRepository.getTutorByMatricula(matricula);
+		Aluno aluno = getByMatricula(matricula);
+		if (aluno.getTutoria() != null) {
+			return aluno;
+		}
+		
+		throw new RuntimeException("Tutor nao encontrado");
 	}
 
-	@Transactional
 	@Override
 	public Iterable<Aluno> getAllTutores() {
-		return alunoRepository.getAllTutores();
+		
+		List<Aluno> tutores = new ArrayList<>();
+		Iterable<Aluno> alunos = getAllAlunos();
+		
+		for (Aluno aluno: alunos) {
+			if (aluno.getTutoria() != null) {
+				tutores.add(aluno);
+			}
+		}
+		
+		return tutores;
+		
 	}
 
-	@Transactional
 	@Override
+	@Transactional
 	public Aluno tornaTutor(Tutoria tutoria) {
-		return alunoRepository.tornarTutor(tutoria);
+		Aluno aluno = getByMatricula(tutoria.getMatricula());
+		
+		if (aluno.getTutoria() != null) {
+			throw new RuntimeException("O aluno ja eh tutor");
+		}
+		
+		aluno.tornarTutor(tutoria);
+		return aluno;
 	}
 
-	@Transactional
 	@Override
+	@Transactional
 	public Aluno cadastraHorario(Horario horario) {
-		return alunoRepository.cadastraHorario(horario);
+		String matricula = horario.getMatricula();
+		
+		if (isTutor(matricula)) {
+			Aluno aluno = getByMatricula(matricula);
+			aluno.getTutoria().adicionaHorario(horario);
+			return aluno;
+		}
+		
+		throw new RuntimeException("Tutor nao encontrado");	
 	}
 
 	@Override
-	@Transactional
 	public boolean getDisponibilidadeHorario(String matricula, String dia, String hora) {
-		return alunoRepository.getDisponibilidadeHorario(matricula, dia, hora);
+		
+		if (isTutor(matricula)) {
+			Aluno aluno = getByMatricula(matricula);
+			Horario tempHorario = new Horario(DiaDaSemana.valueOf(dia), hora);
+			return aluno.getTutoria().getListaHorarios().contains(tempHorario);
+		}
+		
+		throw new RuntimeException("Tutor nao encontrado");
 	}
 
 	@Override
-	@Transactional
 	public boolean getDisponibilidadeLocal(String matricula, String local) {
-		return alunoRepository.getDisponibilidadeLocal(matricula, local);
+		
+		if (isTutor(matricula)) {
+			Aluno aluno = getByMatricula(matricula);	
+			return aluno.getTutoria().getLocais().contains(new Local(local));
+		}
+		
+		throw new RuntimeException("Tutor nao encontrado");
 	}
 
 	@Override
 	@Transactional
 	public Aluno cadastraLocal(Local local) {
-		return alunoRepository.cadastraLocal(local);
+		if (isTutor(local.getMatricula())) {
+			Aluno aluno = getByMatricula(local.getMatricula());
+			aluno.getTutoria().adicionaLocal(local);
+			return aluno;
+		}
+		
+		throw new RuntimeException("Tutor nao encontrado");
+	}
+	
+	
+	public boolean isTutor(String matricula) {
+	
+		Aluno aluno = getByMatricula(matricula);
+		System.out.println(aluno.getTutoria());
+		if (aluno.getTutoria() != null) {
+			return true;
+		}
+			
+		return false;
+	
 	}
 
 }

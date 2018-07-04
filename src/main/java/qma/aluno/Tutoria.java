@@ -71,6 +71,10 @@ public class Tutoria  {
 		return listaHorarios;
 	}
 	
+	public void setListHorarios(List<Horario> horarios) {
+		this.listaHorarios = horarios;
+	}
+	
 	public void adicionaHorario (Horario horario) {
 		if (!this.listaHorarios.contains(horario)) {
 			this.listaHorarios.add(horario);
