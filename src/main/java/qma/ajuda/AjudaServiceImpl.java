@@ -1,10 +1,15 @@
 package qma.ajuda;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import qma.aluno.Aluno;
 import qma.aluno.AlunoRepository;
+import qma.aluno.Local;
+import qma.tutor.DiaDaSemana;
+import qma.tutor.Horario;
 
 @Service
 public class AjudaServiceImpl implements AjudaService{
@@ -17,32 +22,96 @@ public class AjudaServiceImpl implements AjudaService{
 
 	@Override
 	public Ajuda getAjudaById(Long id) {
-		return ajudaRepository.findById(id);
+		Optional<Ajuda> optAjuda = ajudaRepository.findById(id);
+		
+		if (!optAjuda.isPresent()) {
+			throw new RuntimeException("Ajuda nao encontrada");
+		}
+		
+		return optAjuda.get();
 	}
 
 	@Override
 	public Ajuda pedeAjudaOnline(PedidoAjuda pedido) {
 		
-		Aluno tutor = alunoRepository.getTutorAjudaOnline(pedido);
-		Ajuda ajuda = new Ajuda(alunoRepository.findById(pedido.getMatriculaAluno()),
-					tutor, pedido.getDisciplina());
+		Optional<Aluno> optAluno = alunoRepository.findById(pedido.getMatriculaAluno());
 		
-		ajudaRepository.save(ajuda);
+		if (!optAluno.isPresent()) {
+			throw new RuntimeException("Aluno solicitante nao existe");
+		}
+
+		Aluno solicitante = optAluno.get();
 		
-		return ajuda;
-		
+		for (Aluno aluno: alunoRepository.findAll()) {
+			
+			if (isTutor(aluno.getMatricula())) {
+				
+				if (aluno.getTutoria().getDisciplina().equals(pedido.getDisciplina())) {
+					Ajuda ajuda = new Ajuda(solicitante,
+							aluno, pedido.getDisciplina());
+					
+					ajudaRepository.save(ajuda);
+					return ajuda;
+					
+				}
+			}
+		}
+
+		throw new RuntimeException("Nenhum tutor foi encontrado para essa disciplina");
+
 	}
 
 	@Override
 	public Ajuda pedeAjudaPresencial(PedidoAjuda pedido) {
-		Aluno tutor = alunoRepository.getTutorAjudaPresencial(pedido);
-		Ajuda ajuda = new Ajuda(alunoRepository.findById(pedido.getMatriculaAluno()),
-					tutor, pedido.getDisciplina(), pedido.getDia(), pedido.getHora(),
-					pedido.getLocal());
+		Optional<Aluno> optAluno = alunoRepository.findById(pedido.getMatriculaAluno());
 		
-		ajudaRepository.save(ajuda);
+		if (!optAluno.isPresent()) {
+			throw new RuntimeException("Aluno solicitante nao existe");
+		}
+
+		Aluno solicitante = optAluno.get();
 		
-		return ajuda;
+		Horario horario = new Horario(DiaDaSemana.valueOf(pedido.getDia()), pedido.getHora());
+		Local local = new Local(pedido.getLocal());
+		
+		for (Aluno aluno: alunoRepository.findAll()) {
+			
+			if (isTutor(aluno.getMatricula())) {
+				
+				if (aluno.getTutoria().getDisciplina().equals(pedido.getDisciplina()) &&
+						aluno.getTutoria().getListaHorarios().contains(horario) &&
+						aluno.getTutoria().getLocais().contains(local)) {
+					
+					Ajuda ajuda = new Ajuda(solicitante,
+							aluno, pedido.getDisciplina(), pedido.getDia(), pedido.getHora(),
+							pedido.getLocal());
+					
+					ajudaRepository.save(ajuda);
+					return ajuda;
+					
+				}
+			}
+		}
+
+		throw new RuntimeException("Nenhum tutor foi encontrado para essa disciplina, horario e local");
+	}
+	
+	private boolean isTutor(String matricula) {
+		
+		Optional<Aluno> optUser = alunoRepository.findById(matricula);
+		
+		if (!optUser.isPresent()) {
+			throw new RuntimeException("Tutor nao encontrado");
+		}
+		
+		Aluno aluno = optUser.get();
+		
+		if (aluno.getTutoria() != null) {
+			return true;
+		}
+			
+		return false;
+	
 	}
 
 }

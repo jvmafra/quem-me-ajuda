@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,12 +26,12 @@ public class Tutoria  {
 	@Column
 	private String proficiencia;
 	
-	@JoinColumn
-	@OneToMany
+	@Column
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Horario> listaHorarios = new ArrayList<>();
 	
-	@JoinColumn
-	@OneToMany
+	@Column
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Local> locais = new ArrayList<>();
 
 	public Tutoria (String matricula, String disciplina, String proficiencia) {
@@ -69,6 +70,10 @@ public class Tutoria  {
 	
 	public List<Horario> getListaHorarios() {
 		return listaHorarios;
+	}
+	
+	public void setListHorarios(List<Horario> horarios) {
+		this.listaHorarios = horarios;
 	}
 	
 	public void adicionaHorario (Horario horario) {
