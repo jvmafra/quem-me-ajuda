@@ -12,6 +12,4 @@ import org.springframework.stereotype.Repository;
 @Transactional
 public interface AjudaRepository extends JpaRepository<Ajuda, Long>{
 	
-	Optional<Ajuda> findById(Long id);
-
 }

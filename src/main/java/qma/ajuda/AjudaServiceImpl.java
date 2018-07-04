@@ -33,12 +33,14 @@ public class AjudaServiceImpl implements AjudaService{
 
 	@Override
 	public Ajuda pedeAjudaOnline(PedidoAjuda pedido) {
-
-		Aluno solicitante = alunoRepository.findById(pedido.getMatriculaAluno()).get();
 		
-		if (solicitante == null) {
+		Optional<Aluno> optAluno = alunoRepository.findById(pedido.getMatriculaAluno());
+		
+		if (!optAluno.isPresent()) {
 			throw new RuntimeException("Aluno solicitante nao existe");
 		}
+
+		Aluno solicitante = optAluno.get();
 		
 		for (Aluno aluno: alunoRepository.findAll()) {
 			
@@ -61,11 +63,13 @@ public class AjudaServiceImpl implements AjudaService{
 
 	@Override
 	public Ajuda pedeAjudaPresencial(PedidoAjuda pedido) {
-		Aluno solicitante = alunoRepository.findById(pedido.getMatriculaAluno()).get();
+		Optional<Aluno> optAluno = alunoRepository.findById(pedido.getMatriculaAluno());
 		
-		if (solicitante == null) {
+		if (!optAluno.isPresent()) {
 			throw new RuntimeException("Aluno solicitante nao existe");
 		}
+
+		Aluno solicitante = optAluno.get();
 		
 		Horario horario = new Horario(DiaDaSemana.valueOf(pedido.getDia()), pedido.getHora());
 		Local local = new Local(pedido.getLocal());
@@ -79,7 +83,8 @@ public class AjudaServiceImpl implements AjudaService{
 						aluno.getTutoria().getLocais().contains(local)) {
 					
 					Ajuda ajuda = new Ajuda(solicitante,
-							aluno, pedido.getDisciplina());
+							aluno, pedido.getDisciplina(), pedido.getDia(), pedido.getHora(),
+							pedido.getLocal());
 					
 					ajudaRepository.save(ajuda);
 					return ajuda;
