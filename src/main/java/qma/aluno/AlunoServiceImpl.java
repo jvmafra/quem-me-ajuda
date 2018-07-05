@@ -2,9 +2,14 @@ package qma.aluno;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import qma.security.JWTTokenProvider;
 import qma.tutor.DiaDaSemana;
 import qma.tutor.Horario;
 
@@ -12,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.management.RuntimeErrorException;
 import javax.transaction.Transactional;
 
 
@@ -21,8 +27,14 @@ public class AlunoServiceImpl implements AlunoService {
 	@Autowired
 	AlunoRepository alunoRepository;
 	
-//	@Autowired
-//	PasswordEncoder passwordEnconder;
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JWTTokenProvider jwtTokenProvider;
+
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
 	@Override
 	public Aluno getByMatricula(String matricula) {
@@ -38,8 +50,19 @@ public class AlunoServiceImpl implements AlunoService {
 	@Override
 	@Transactional
 	public Aluno save(Aluno aluno) {
-//		aluno.setSenha(passwordEnconder.encode(aluno.getSenha()));
-		return alunoRepository.save(aluno);
+		
+		try {
+			getByMatricula(aluno.getMatricula());
+			throw new RuntimeException("Aluno existente");
+			
+		} catch (Exception e) {
+			aluno.setSenha(passwordEncoder.encode(aluno.getSenha()));
+			List<Role> roles = new ArrayList<Role>();
+		    roles.add(Role.ROLE_ALUNO);
+		    aluno.setRoles(roles);
+			alunoRepository.save(aluno);
+			return aluno;
+		}
 	}
 
 	@Override
@@ -171,5 +194,33 @@ public class AlunoServiceImpl implements AlunoService {
 		return false;
 	
 	}
+	
+    public String login(Aluno aluno) {
+    	
+    	Aluno alunoFromDB = getByMatricula(aluno.getMatricula());
+        
+        if (!passwordEncoder.matches(aluno.getSenha(), alunoFromDB.getSenha())) {
+        	throw new RuntimeException("Usuario ou senha invalidos");
+        }
+
+        String token = authUserAndGetToken(aluno.getMatricula(), aluno.getSenha(), aluno.getRoles());
+        
+        return token;
+    }
+    
+    private String authUserAndGetToken (String matricula, String password, List<Role> roles) {
+        try{
+          authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(matricula, password));
+          return jwtTokenProvider.createToken(matricula, roles);
+        } catch (AuthenticationException e) {
+          throw new RuntimeException("Invalid token");
+        }
+    }
+    
+    public Aluno getUsuarioLogado() {
+        String matricula = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return getByMatricula(matricula);
+    }
 
 }

@@ -1,11 +1,15 @@
 package qma.aluno;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+
 import static java.util.Objects.isNull;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
@@ -36,12 +40,15 @@ public class Aluno implements Serializable{
 	
 	@Column
 	private String codCurso;
-	
+
 	@Column
 	private String telefone;
 	
 	@Column
 	private String email;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+    private List<Role> roles;
 
 	public Aluno() {
 		
@@ -121,6 +128,14 @@ public class Aluno implements Serializable{
 	
 	public Tutoria getTutoria() {
 		return tutoria;
+	}
+	
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 	
 	@Override

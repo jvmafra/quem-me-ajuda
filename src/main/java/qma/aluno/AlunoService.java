@@ -15,5 +15,6 @@ public interface AlunoService {
 	boolean getDisponibilidadeHorario(String matricula, String dia, String hora);
 	boolean getDisponibilidadeLocal(String matricula, String local);
 	Aluno cadastraLocal(Local localDTO);
+	String login(Aluno aluno);
 
 }
