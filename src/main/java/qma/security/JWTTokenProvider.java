@@ -23,7 +23,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class JWTTokenProvider {
 
   private String secretKey = "secret";
-  private long validityInMilliseconds = 360000000; // 100h
+  //private long validityInMilliseconds = 360000000; // 100h
+  private long validityInMilliseconds = 300000; // 5 min
 
   @Autowired
   UserInfoService userInfoService;

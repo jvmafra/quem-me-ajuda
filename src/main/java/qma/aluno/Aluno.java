@@ -124,6 +124,7 @@ public class Aluno implements Serializable{
 	
 	public void tornarTutor(Tutoria tutoria) {
 		this.tutoria = tutoria;
+		this.roles.add(Role.ROLE_TUTOR);
 	}
 	
 	public Tutoria getTutoria() {

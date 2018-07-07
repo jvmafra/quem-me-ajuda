@@ -17,17 +17,17 @@ public class TutorRestController {
 	@Autowired
 	AlunoService alunoService;
 	
-	@RequestMapping(value = "tutor", method=RequestMethod.GET, params="matricula")
+	@RequestMapping(value = "/tutor", method=RequestMethod.GET, params="matricula")
     public Aluno getTutorByMatricula(String matricula){
         return alunoService.getTutorByMatricula(matricula);
     }
 	
-	@RequestMapping(value="tutor", method=RequestMethod.GET)
+	@RequestMapping(value="/tutor", method=RequestMethod.GET)
     public Iterable<Aluno> getAlunos(){
         return alunoService.getAllTutores();
     }
 	
-	@RequestMapping(value="tutor", method=RequestMethod.POST)
+	@RequestMapping(value="/tutor", method=RequestMethod.POST)
     public Aluno tornarTutor(@RequestBody Tutoria tutoria){
         return alunoService.tornaTutor(tutoria);
     }
