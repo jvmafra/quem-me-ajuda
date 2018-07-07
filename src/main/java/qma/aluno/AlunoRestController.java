@@ -30,10 +30,13 @@ public class AlunoRestController {
         return alunoService.getAllAlunos();
     }
 	
-	@RequestMapping(value="/aluno", method=RequestMethod.POST)
+	@RequestMapping(value="/aluno/signup", method=RequestMethod.POST)
     public Aluno save(@RequestBody Aluno aluno){
         return alunoService.save(aluno);
     }
+	
+	@RequestMapping(value="/aluno/login", method = RequestMethod.POST,  headers="Content-Type=application/json")
+	public String login(@RequestBody Aluno aluno) { return alunoService.login(aluno); }
 	
 	
 	
