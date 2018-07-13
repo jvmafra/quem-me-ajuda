@@ -1,5 +1,8 @@
 package qma.aluno;
 
+import java.util.Map;
+
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +39,12 @@ public class AlunoRestController {
     }
 	
 	@RequestMapping(value="/aluno/login", method = RequestMethod.POST,  headers="Content-Type=application/json")
-	public String login(@RequestBody Aluno aluno) { return alunoService.login(aluno); }
+	public Map<String,String> login(@RequestBody Aluno aluno) { 
+		System.out.println(alunoService.login(aluno));
+		return alunoService.login(aluno); }
+	
+	@RequestMapping(value="/aluno/logado", method = RequestMethod.POST)
+	public Aluno usuarioLogado() { return alunoService.getUsuarioLogado(); }
 	
 	
 	

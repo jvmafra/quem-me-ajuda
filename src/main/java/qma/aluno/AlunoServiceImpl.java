@@ -14,7 +14,9 @@ import qma.tutor.DiaDaSemana;
 import qma.tutor.Horario;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.management.RuntimeErrorException;
@@ -195,9 +197,16 @@ public class AlunoServiceImpl implements AlunoService {
 	
 	}
 	
-    public String login(Aluno aluno) {
+    public Map<String, String> login(Aluno aluno) {
     	
-    	Aluno alunoFromDB = getByMatricula(aluno.getMatricula());
+    	Aluno alunoFromDB;
+    	
+    	try {
+    		alunoFromDB = getByMatricula(aluno.getMatricula());
+		} catch (Exception e) {
+			throw new RuntimeException("Usuario ou senha invalidos");
+		}
+    	
         
         if (!passwordEncoder.matches(aluno.getSenha(), alunoFromDB.getSenha())) {
         	throw new RuntimeException("Usuario ou senha invalidos");
@@ -205,7 +214,10 @@ public class AlunoServiceImpl implements AlunoService {
 
         String token = authUserAndGetToken(aluno.getMatricula(), aluno.getSenha(), aluno.getRoles());
         
-        return token;
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("token", token);
+        credentials.put("matricula", aluno.getMatricula());
+        return credentials;
     }
     
     private String authUserAndGetToken (String matricula, String password, List<Role> roles) {
