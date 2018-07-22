@@ -28,9 +28,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// starts authorizing configurations
 		.authorizeRequests()
 		//Alowing some url's
-		.antMatchers("/aluno/login").permitAll()
-		.antMatchers("/aluno/signup").permitAll()
-		.antMatchers("/aluno/logado").permitAll()
+		.antMatchers("/login").permitAll()
+		.antMatchers("/signup").permitAll()
+		.antMatchers("v2/api-docs").permitAll()
 		// authenticate all remaining URLS
 		.antMatchers("/aluno").access("hasRole('ROLE_ALUNO') or hasRole('ROLE_TUTOR')")
 		.antMatchers("/tutor").access("hasRole('ROLE_ALUNO') or hasRole('ROLE_TUTOR')")

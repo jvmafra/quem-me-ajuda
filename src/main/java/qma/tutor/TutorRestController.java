@@ -17,7 +17,7 @@ public class TutorRestController {
 	@Autowired
 	AlunoService alunoService;
 	
-	@RequestMapping(value = "/tutor", method=RequestMethod.GET, params="matricula")
+	@RequestMapping(value = "/tutor/{id}", method=RequestMethod.GET, params="matricula")
     public Aluno getTutorByMatricula(String matricula){
         return alunoService.getTutorByMatricula(matricula);
     }

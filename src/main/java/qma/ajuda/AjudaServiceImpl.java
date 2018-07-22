@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import qma.aluno.Aluno;
 import qma.aluno.AlunoRepository;
 import qma.aluno.Local;
+import qma.exceptions.AjudaNaoEncontradaException;
+import qma.exceptions.SolicitanteNaoEncontradoException;
+import qma.exceptions.TutorNaoEncontradoException;
 import qma.tutor.DiaDaSemana;
 import qma.tutor.Horario;
 
@@ -25,7 +28,7 @@ public class AjudaServiceImpl implements AjudaService{
 		Optional<Ajuda> optAjuda = ajudaRepository.findById(id);
 		
 		if (!optAjuda.isPresent()) {
-			throw new RuntimeException("Ajuda nao encontrada");
+			throw new AjudaNaoEncontradaException();
 		}
 		
 		return optAjuda.get();
@@ -37,7 +40,7 @@ public class AjudaServiceImpl implements AjudaService{
 		Optional<Aluno> optAluno = alunoRepository.findById(pedido.getMatriculaAluno());
 		
 		if (!optAluno.isPresent()) {
-			throw new RuntimeException("Aluno solicitante nao existe");
+			throw new SolicitanteNaoEncontradoException();
 		}
 
 		Aluno solicitante = optAluno.get();
@@ -101,7 +104,7 @@ public class AjudaServiceImpl implements AjudaService{
 		Optional<Aluno> optUser = alunoRepository.findById(matricula);
 		
 		if (!optUser.isPresent()) {
-			throw new RuntimeException("Tutor nao encontrado");
+			throw new TutorNaoEncontradoException();
 		}
 		
 		Aluno aluno = optUser.get();

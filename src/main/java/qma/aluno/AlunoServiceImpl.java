@@ -9,6 +9,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import qma.exceptions.AlunoExistenteException;
+import qma.exceptions.AlunoJaTutorException;
+import qma.exceptions.AlunoNaoEncontradoException;
+import qma.exceptions.LoginInvalidoException;
+import qma.exceptions.TutorNaoEncontradoException;
 import qma.security.JWTTokenProvider;
 import qma.tutor.DiaDaSemana;
 import qma.tutor.Horario;
@@ -18,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.management.RuntimeErrorException;
 import javax.transaction.Transactional;
 
 
@@ -43,7 +46,7 @@ public class AlunoServiceImpl implements AlunoService {
 		Optional<Aluno> optUser = alunoRepository.findById(matricula);
 		
 		if (!optUser.isPresent()) {
-			throw new RuntimeException("Aluno nao encontrado");
+			throw new AlunoNaoEncontradoException();
 		}
 		
 		return optUser.get();
@@ -55,9 +58,10 @@ public class AlunoServiceImpl implements AlunoService {
 		
 		try {
 			getByMatricula(aluno.getMatricula());
-			throw new RuntimeException("Aluno existente");
+			throw new AlunoExistenteException();
 			
 		} catch (Exception e) {
+			AlunoValidator.validaAluno(aluno);
 			aluno.setSenha(passwordEncoder.encode(aluno.getSenha()));
 			List<Role> roles = new ArrayList<Role>();
 		    roles.add(Role.ROLE_ALUNO);
@@ -103,7 +107,7 @@ public class AlunoServiceImpl implements AlunoService {
 			return aluno;
 		}
 		
-		throw new RuntimeException("Tutor nao encontrado");
+		throw new TutorNaoEncontradoException();
 	}
 
 	@Override
@@ -128,7 +132,7 @@ public class AlunoServiceImpl implements AlunoService {
 		Aluno aluno = getByMatricula(tutoria.getMatricula());
 		
 		if (aluno.getTutoria() != null) {
-			throw new RuntimeException("O aluno ja eh tutor");
+			throw new AlunoJaTutorException();
 		}
 		
 		aluno.tornarTutor(tutoria);
@@ -146,7 +150,7 @@ public class AlunoServiceImpl implements AlunoService {
 			return aluno;
 		}
 		
-		throw new RuntimeException("Tutor nao encontrado");	
+		throw new TutorNaoEncontradoException();
 	}
 
 	@Override
@@ -158,7 +162,7 @@ public class AlunoServiceImpl implements AlunoService {
 			return aluno.getTutoria().getListaHorarios().contains(tempHorario);
 		}
 		
-		throw new RuntimeException("Tutor nao encontrado");
+		throw new TutorNaoEncontradoException();
 	}
 
 	@Override
@@ -169,7 +173,7 @@ public class AlunoServiceImpl implements AlunoService {
 			return aluno.getTutoria().getLocais().contains(new Local(local));
 		}
 		
-		throw new RuntimeException("Tutor nao encontrado");
+		throw new TutorNaoEncontradoException();
 	}
 
 	@Override
@@ -181,7 +185,7 @@ public class AlunoServiceImpl implements AlunoService {
 			return aluno;
 		}
 		
-		throw new RuntimeException("Tutor nao encontrado");
+		throw new TutorNaoEncontradoException();
 	}
 	
 	
@@ -204,12 +208,12 @@ public class AlunoServiceImpl implements AlunoService {
     	try {
     		alunoFromDB = getByMatricula(aluno.getMatricula());
 		} catch (Exception e) {
-			throw new RuntimeException("Usuario ou senha invalidos");
+			throw new LoginInvalidoException();
 		}
     	
         
         if (!passwordEncoder.matches(aluno.getSenha(), alunoFromDB.getSenha())) {
-        	throw new RuntimeException("Usuario ou senha invalidos");
+        	throw new LoginInvalidoException();
         }
 
         String token = authUserAndGetToken(aluno.getMatricula(), aluno.getSenha(), aluno.getRoles());
