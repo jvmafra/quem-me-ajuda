@@ -26,6 +26,12 @@ public class Horario {
 		this.hora = hora;
 	}
 	
+	public Horario (String matricula, DiaDaSemana dia, String hora) {
+		this.matricula = matricula;
+		this.dia = dia;
+		this.hora = hora;
+	}
+	
 	public Horario() {
 		
 	}

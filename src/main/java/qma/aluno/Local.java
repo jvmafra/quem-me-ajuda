@@ -25,6 +25,11 @@ public class Local {
 	public Local(String local) {
 		this.local = local;
 	}
+	
+	public Local(String matricula, String local) {
+		this.matricula = matricula;
+		this.local = local;
+	}
 
 	public String getMatricula() {
 		return matricula;

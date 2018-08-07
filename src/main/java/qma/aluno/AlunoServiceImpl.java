@@ -75,30 +75,6 @@ public class AlunoServiceImpl implements AlunoService {
 	public Iterable<Aluno> getAllAlunos() {
 		return alunoRepository.findAll();
 	}
-
-	@Override
-	public String getInfoAluno(String matricula, String atributo) {
-		Aluno aluno = getByMatricula(matricula);
-		
-		if (atributo == "Nome") {
-			return aluno.getNome();
-			
-		} else if (atributo == "CodCurso") {
-			return aluno.getCodCurso();
-			
-		} else if (atributo == "Telefone") {
-			return aluno.getTelefone();
-			
-		} else if (atributo == "Email") {
-			return aluno.getEmail();
-			
-		} else if (atributo == "Matricula") {
-			return matricula;
-			
-		} else {
-			throw new RuntimeException("Atributo nao encontrado");
-		}
-	}
 	
 	@Override
 	public Aluno getTutorByMatricula(String matricula) {
@@ -154,6 +130,7 @@ public class AlunoServiceImpl implements AlunoService {
 	}
 
 	@Override
+	@Transactional
 	public boolean getDisponibilidadeHorario(String matricula, String dia, String hora) {
 		
 		if (isTutor(matricula)) {
@@ -166,6 +143,7 @@ public class AlunoServiceImpl implements AlunoService {
 	}
 
 	@Override
+	@Transactional
 	public boolean getDisponibilidadeLocal(String matricula, String local) {
 		
 		if (isTutor(matricula)) {
@@ -192,7 +170,6 @@ public class AlunoServiceImpl implements AlunoService {
 	public boolean isTutor(String matricula) {
 	
 		Aluno aluno = getByMatricula(matricula);
-		System.out.println(aluno.getTutoria());
 		if (aluno.getTutoria() != null) {
 			return true;
 		}
@@ -231,12 +208,6 @@ public class AlunoServiceImpl implements AlunoService {
         } catch (AuthenticationException e) {
           throw new RuntimeException("Invalid token");
         }
-    }
-    
-    public Aluno getUsuarioLogado() {
-        String matricula = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        return getByMatricula(matricula);
     }
 
 }
