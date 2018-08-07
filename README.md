@@ -40,6 +40,8 @@ Da pasta principal /quem-me-ajuda, rodar:
 
 `$ mvn spring-boot:run`
 
+A aplicação rodará em localhost:9090
+
 
 
 
